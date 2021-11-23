@@ -35,6 +35,7 @@ def main(args):
     print("\n\n############### Ini Training ###############\n")
     for i_episode in range(N_EPISODES):
         state = env.reset()
+        penalties = 0
         if RENDER:
             print("############### Ini Episode", i_episode, "###############")
         for t in range(N_STEPS):
@@ -45,6 +46,8 @@ def main(args):
             if RENDER:
                 print("Action:", actions_dict[action])
             next_state, reward, done, info = env.step(action)
+            if reward == -10:
+                penalties += 1
             if RENDER:
                 print("Next State:", next_state, "\n")
             agent.update_qtable(state, action, reward, next_state)
@@ -52,20 +55,30 @@ def main(args):
             if done:
                 if i_episode % 10 == 0:
                     print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(i_episode, reward, t+1, info))
-                hist[i_episode] = {'reward': reward, 'steps': t+1}
+                penalties = 0
+                hist[i_episode] = {'reward': reward, 'steps': t+1, 'penalties': penalties}
                 break
         if RENDER:
             print("############### End Episode", i_episode, "###############")
     print("\n############### End Training ###############\n")
     print("\n\n################## Report ##################\n")
-    print("Average reward:", utils.get_average_reward_last_n(hist, N_EPISODES))
-    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)))
-    print("Average steps:", utils.get_average_steps_last_n(hist, N_EPISODES))
-    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)))
+    report = {"average_reward": utils.get_average_reward_last_n(hist, N_EPISODES),
+            "average_reward_last_10": utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)),
+            "average_steps": utils.get_average_steps_last_n(hist, N_EPISODES),
+            "average_steps_last_10": utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)),
+            "average_penalties": utils.get_average_penalties_last_n(hist, N_EPISODES),
+            "average_penalties_last_10": utils.get_average_penalties_last_n(hist, int(N_EPISODES*0.1))
+        }
+    print("Average reward:", report["average_reward"])
+    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_reward_last_10"])
+    print("Average steps:", report["average_steps"])
+    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_steps_last_10"])
+    print("Average penalties:", report["average_penalties"])
+    print("Average penalties of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_penalties_last_10"])
     print("\nQ-table:")
     print(agent.qtable)
     print("\n################ End Report ################")
-    utils.generate_report_file(config, hist, agent.qtable)
+    utils.generate_report_file(config, report, hist, agent.qtable)
     env.close()
 
 if __name__ == '__main__':

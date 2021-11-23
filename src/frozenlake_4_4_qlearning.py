@@ -60,14 +60,19 @@ def main(args):
             print("############### End Episode", i_episode, "###############")
     print("\n############### End Training ###############\n")
     print("\n\n################## Report ##################\n")
-    print("Average reward:", utils.get_average_reward_last_n(hist, N_EPISODES))
-    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)))
-    print("Average steps:", utils.get_average_steps_last_n(hist, N_EPISODES))
-    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)))
+    report = {"average_reward": utils.get_average_reward_last_n(hist, N_EPISODES),
+            "average_reward_last_10": utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)),
+            "average_steps": utils.get_average_steps_last_n(hist, N_EPISODES),
+            "average_steps_last_10": utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1))
+        }
+    print("Average reward:", report["average_reward"])
+    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_reward_last_10"])
+    print("Average steps:", report["average_steps"])
+    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_steps_last_10"])
     print("\nQ-table:")
     print(agent.qtable)
     print("\n################ End Report ################")
-    utils.generate_report_file(config, hist, agent.qtable)
+    utils.generate_report_file(config, report, hist, agent.qtable)
     env.close()
 
 if __name__ == '__main__':

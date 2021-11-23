@@ -7,15 +7,15 @@ from utils import utils
 def main(args):
 
     f = open(args.configfile, "r")
-    agentconfig = yaml.load(f, Loader=yaml.FullLoader)
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
-    N_EPISODES = agentconfig['n_episodes']
-    N_STEPS = agentconfig['n_steps']
-    IS_SLIPPERY = agentconfig['is_slippery']
-    EXPLORATION_RATIO = agentconfig['exploration_ratio']
-    LEARNING_RATE = agentconfig['learning_rate']
-    DISCOUNT_FACTOR = agentconfig['discount_factor']
-    RENDER = agentconfig['render']
+    N_EPISODES = config['n_episodes']
+    N_STEPS = config['n_steps']
+    IS_SLIPPERY = config['is_slippery']
+    EXPLORATION_RATIO = config['exploration_ratio']
+    LEARNING_RATE = config['learning_rate']
+    DISCOUNT_FACTOR = config['discount_factor']
+    RENDER = config['render']
 
     print("\n################ Parameters ################\n")
     print("N_EPISODES:", N_EPISODES)

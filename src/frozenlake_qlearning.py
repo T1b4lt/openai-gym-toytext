@@ -1,62 +1,77 @@
+import argparse
+import yaml
 import gym
-import matplotlib.pyplot as plt
 from agents.q_agent import QAgent
 from utils import utils
 
-N_EPISODES = 1000
-N_STEPS = 100
-EXPLORATION_RATIO = 0.7
-LEARNING_RATE = 0.9
-DISCOUNT_FACTOR = 0.9
-RENDER = False
-IS_SLIPPERY = False
+def main(args):
 
-env = gym.make('FrozenLake-v1', is_slippery=IS_SLIPPERY)
+    f = open(args.configfile, "r")
+    agentconfig = yaml.load(f, Loader=yaml.FullLoader)
 
-actions_dict = {0: 'left', 1: 'down', 2: 'right', 3: 'up'}
-hist = {}
+    N_EPISODES = agentconfig['n_episodes']
+    N_STEPS = agentconfig['n_steps']
+    IS_SLIPPERY = agentconfig['is_slippery']
+    EXPLORATION_RATIO = agentconfig['exploration_ratio']
+    LEARNING_RATE = agentconfig['learning_rate']
+    DISCOUNT_FACTOR = agentconfig['discount_factor']
+    RENDER = agentconfig['render']
 
-agent = QAgent(env.observation_space, env.action_space, exploration_ratio=EXPLORATION_RATIO, learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR)
+    print("\n################ Parameters ################\n")
+    print("N_EPISODES:", N_EPISODES)
+    print("N_STEPS:", N_STEPS)
+    print("IS_SLIPPERY:", IS_SLIPPERY)
+    print("EXPLORATION_RATIO:", EXPLORATION_RATIO)
+    print("LEARNING_RATE:", LEARNING_RATE)
+    print("DISCOUNT_FACTOR:", DISCOUNT_FACTOR)
+    print("RENDER:", RENDER)
+    print("\n############################################\n")
 
-for i_episode in range(N_EPISODES):
-    state = env.reset()
-    if RENDER:
-        print("############### Ini Episode", i_episode, "###############")
-    for t in range(N_STEPS):
+    env = gym.make('FrozenLake-v1', is_slippery=IS_SLIPPERY)
+
+    actions_dict = {0: 'left', 1: 'down', 2: 'right', 3: 'up'}
+    hist = {}
+
+    agent = QAgent(env.observation_space, env.action_space, exploration_ratio=EXPLORATION_RATIO, learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR)
+
+    print("\n\n############### Ini Training ###############\n")
+    for i_episode in range(N_EPISODES):
+        state = env.reset()
         if RENDER:
-            env.render()
-            print("Actual State:", state)
-        action = agent.get_next_step(state)
+            print("############### Ini Episode", i_episode, "###############")
+        for t in range(N_STEPS):
+            if RENDER:
+                env.render()
+                print("Actual State:", state)
+            action = agent.get_next_step(state)
+            if RENDER:
+                print("Action:", actions_dict[action])
+            next_state, reward, done, info = env.step(action)
+            if RENDER:
+                print("Next State:", next_state, "\n")
+            agent.update_qtable(state, action, reward, next_state)
+            state = next_state
+            if done:
+                if i_episode % 10 == 0:
+                    print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(i_episode, reward, t+1, info))
+                hist[i_episode] = {'reward': reward, 'steps': t+1}
+                break
         if RENDER:
-            print("Action:", actions_dict[action])
-        next_state, reward, done, info = env.step(action)
-        if RENDER:
-            print("Next State:", next_state, "\n")
-        agent.update_qtable(state, action, reward, next_state)
-        state = next_state
-        if done:
-            if i_episode % 10 == 0:
-                print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(i_episode, reward, t+1, info))
-            hist[i_episode] = {'reward': reward, 'steps': t+1}
-            break
-    if RENDER:
-        print("############### End Episode", i_episode, "###############")
-print("Average reward:", utils.get_average_reward_last_n(hist, N_EPISODES))
-print("Average reward of last 100:", utils.get_average_reward_last_n(hist, 100))
-print("Average steps:", utils.get_average_steps_last_n(hist, N_EPISODES))
-print("Average steps of last 100:", utils.get_average_steps_last_n(hist, 100))
-print("Q-table:")
-print(agent.qtable)
-"""
-rewards_total = [hist[i]['reward'] for i in hist]
-steps_total = [hist[i]['steps'] for i in hist]
-plt.figure(figsize=(12,5))
-plt.title("Rewards")
-plt.bar(len(rewards_total), rewards_total, alpha=0.6, color='green', width=N_EPISODES)
-plt.show()
-plt.figure(figsize=(12,5))
-plt.title("Steps / Episode length")
-plt.bar(len(steps_total), steps_total, alpha=0.6, color='red', width=N_EPISODES)
-plt.show()
-"""
-env.close()
+            print("############### End Episode", i_episode, "###############")
+    print("\n############### End Training ###############\n")
+    print("\n\n################## Report ##################\n")
+    print("Average reward:", utils.get_average_reward_last_n(hist, N_EPISODES))
+    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)))
+    print("Average steps:", utils.get_average_steps_last_n(hist, N_EPISODES))
+    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)))
+    print("\nQ-table:")
+    print(agent.qtable)
+    print("\n################ End Report ################")
+    env.close()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Test argparse')
+    parser.add_argument('-f', '--file', help='agent config file', required=True, type=str, dest='configfile')
+    args = parser.parse_args()
+    main(args)
+

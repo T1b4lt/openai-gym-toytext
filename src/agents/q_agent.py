@@ -20,7 +20,7 @@ class QAgent:
             action = self.actions.sample()
         # Exploitation
         else:
-            random_values = np.random.uniform(low=0, high=1, size=(1, 4))/1000
+            random_values = np.random.uniform(low=0, high=1, size=(1, self.actions.n))/1000
             action = np.argmax(self.qtable[state]+random_values)
         # e-greedy decay
         if self.exploration_ratio > 0.05:

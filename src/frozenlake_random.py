@@ -1,6 +1,6 @@
 import gym
 import matplotlib.pyplot as plt
-from q_agent import QAgent
+from agents.q_agent import QAgent
 from utils import utils
 
 N_EPISODES = 1000

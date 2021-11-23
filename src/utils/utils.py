@@ -1,4 +1,6 @@
 import numpy as np
+import json
+from datetime import datetime
 
 def get_reward_array(hist_dict):
     """
@@ -27,3 +29,21 @@ def get_average_steps_last_n(hist_dict, n_episodes):
     """
     hist = [val.get('steps') for val in hist_dict.values()]
     return np.mean(hist[-n_episodes:])
+
+def generate_report_file(config, hist, qtable):
+    """
+    Generate a report from the history dict.
+    """
+    report = {}
+    report['config'] = config
+    report['report'] = {}
+    report['report']['total_average_reward'] = get_average_reward_last_n(hist, config['n_episodes'])
+    report['report']['last_10_average_reward'] = get_average_reward_last_n(hist, int(config['n_episodes']*0.1))
+    report['report']['total_average_steps'] = get_average_steps_last_n(hist, config['n_episodes'])
+    report['report']['last_10_average_steps'] = get_average_steps_last_n(hist, int(config['n_episodes']*0.1))
+    report['qtable'] = qtable.tolist()
+    report['hist'] = hist
+
+    report_file_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '_report.json'
+    json.dump(report, open("../resources/reports/"+report_file_name, "w"), indent=4)
+    return

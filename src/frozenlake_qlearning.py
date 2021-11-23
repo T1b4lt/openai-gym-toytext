@@ -67,6 +67,7 @@ def main(args):
     print("\nQ-table:")
     print(agent.qtable)
     print("\n################ End Report ################")
+    utils.generate_report_file(config, hist, agent.qtable)
     env.close()
 
 if __name__ == '__main__':

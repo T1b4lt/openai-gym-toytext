@@ -1,0 +1,8 @@
+config_name: "frozen_lake_8_8_1.yaml"
+n_episodes: 1000
+n_steps: 100
+exploration_ratio: 0.7
+learning_rate: 0.9
+discount_factor: 0.9
+render: False
+is_slippery: False

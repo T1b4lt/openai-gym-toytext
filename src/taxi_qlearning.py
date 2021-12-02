@@ -3,6 +3,7 @@ import yaml
 import gym
 from agents.q_agent import QAgent
 from utils import utils
+import numpy as np
 
 
 def main(args):
@@ -39,6 +40,7 @@ def main(args):
     for i_episode in range(N_EPISODES):
         state = env.reset()
         penalties = 0
+        reward_counter = 0
         if RENDER:
             print("############### Ini Episode", i_episode, "###############")
         for t in range(N_STEPS):
@@ -49,6 +51,7 @@ def main(args):
             if RENDER:
                 print("Action:", actions_dict[action])
             next_state, reward, done, info = env.step(action)
+            reward_counter += reward
             if reward == -10:
                 penalties += 1
             if RENDER:
@@ -56,13 +59,12 @@ def main(args):
             agent.update_qtable(state, action, reward, next_state)
             state = next_state
             if done:
-                if i_episode % 10 == 0:
-                    print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
-                        i_episode, reward, t+1, info))
-                penalties = 0
-                hist[i_episode] = {'reward': reward,
-                                   'steps': t+1, 'penalties': penalties}
                 break
+        if i_episode % 100 == 0:
+            print('Episode: {} Reward: {} Steps Taken: {} Penalties: {} Info: {}'.format(
+                i_episode, reward_counter, t+1, penalties, info))
+        hist[i_episode] = {'reward': reward_counter,
+                           'steps': t+1, 'penalties': penalties}
         if RENDER:
             print("############### End Episode", i_episode, "###############")
     print("\n############### End Training ###############\n")

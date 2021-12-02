@@ -57,7 +57,7 @@ def main(args):
                 penalties += 1
             if RENDER:
                 print("Next State:", next_state, "\n")
-            agent.update_qtable(state, action, reward, next_state, 20)
+            agent.update_qtable(state, action, reward, next_state, done)
             state = next_state
             if done:
                 break

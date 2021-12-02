@@ -30,11 +30,11 @@ for i_episode in range(N_EPISODES):
             print("Next State:", next_state, "\n")
         state = next_state
         if done:
-            if i_episode % 10 == 0:
-                print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
-                    i_episode, reward, t+1, info))
-            hist[i_episode] = {'reward': reward, 'steps': t+1}
             break
+    if i_episode % 10 == 0:
+        print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
+            i_episode, reward, t+1, info))
+    hist[i_episode] = {'reward': reward, 'steps': t+1}
     if RENDER:
         print("############### End Episode", i_episode, "###############")
 print("Average reward:", utils.get_average_reward_last_n(hist, N_EPISODES))

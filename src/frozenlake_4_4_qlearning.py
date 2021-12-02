@@ -54,11 +54,11 @@ def main(args):
             agent.update_qtable(state, action, reward, next_state)
             state = next_state
             if done:
-                if i_episode % 10 == 0:
-                    print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
-                        i_episode, reward, t+1, info))
-                hist[i_episode] = {'reward': reward, 'steps': t+1}
                 break
+        if i_episode % 10 == 0:
+            print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
+                i_episode, reward, t+1, info))
+        hist[i_episode] = {'reward': reward, 'steps': t+1}
         if RENDER:
             print("############### End Episode", i_episode, "###############")
     print("\n############### End Training ###############\n")

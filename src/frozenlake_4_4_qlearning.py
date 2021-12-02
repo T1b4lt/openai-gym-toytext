@@ -52,7 +52,7 @@ def main(args):
             next_state, reward, done, info = env.step(action)
             if RENDER:
                 print("Next State:", next_state, "\n")
-            agent.update_qtable(state, action, reward, next_state)
+            agent.update_qtable(state, action, reward, next_state, 1)
             state = next_state
             if done:
                 break

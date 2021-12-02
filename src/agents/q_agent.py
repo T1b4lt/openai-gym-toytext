@@ -29,9 +29,9 @@ class QAgent:
             self.exploration_ratio -= 0.01
         return action
 
-    def update_qtable(self, state, action, reward, next_state):
+    def update_qtable(self, state, action, reward, next_state, final_state_condition):
         # Update Q-table if not final state
-        if reward == 0:
+        if reward != final_state_condition:
             self.qtable[state, action] = self.qtable[state, action] + self.learning_rate * (
                 reward + self.discount_factor * np.max(self.qtable[next_state]) - self.qtable[state, action])
         # Update Q-table if final state

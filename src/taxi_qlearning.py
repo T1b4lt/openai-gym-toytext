@@ -17,6 +17,7 @@ def main(args):
     LEARNING_RATE = config['learning_rate']
     DISCOUNT_FACTOR = config['discount_factor']
     RENDER = config['render']
+    REPORT_FILE = config['report_file']
 
     print("\n################ Parameters ################\n")
     print("N_EPISODES:", N_EPISODES)
@@ -88,7 +89,8 @@ def main(args):
     print("\nQ-table:")
     print(agent.qtable)
     print("\n################ End Report ################")
-    utils.generate_report_file(config, report, hist, agent.qtable)
+    if REPORT_FILE:
+        utils.generate_report_file(config, report, hist, agent.qtable)
     env.close()
 
 

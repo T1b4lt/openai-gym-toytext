@@ -4,6 +4,7 @@ import gym
 from agents.q_agent import QAgent
 from utils import utils
 
+
 def main(args):
 
     f = open(args.configfile, "r")
@@ -27,10 +28,12 @@ def main(args):
 
     env = gym.make('Taxi-v3')
 
-    actions_dict = {0: 'south', 1: 'north', 2: 'east', 3: 'west', 4: 'pickup', 5: 'dropoff'}
+    actions_dict = {0: 'south', 1: 'north', 2: 'east',
+                    3: 'west', 4: 'pickup', 5: 'dropoff'}
     hist = {}
 
-    agent = QAgent(env.observation_space, env.action_space, exploration_ratio=EXPLORATION_RATIO, learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR)
+    agent = QAgent(env.observation_space, env.action_space, exploration_ratio=EXPLORATION_RATIO,
+                   learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR)
 
     print("\n\n############### Ini Training ###############\n")
     for i_episode in range(N_EPISODES):
@@ -54,36 +57,42 @@ def main(args):
             state = next_state
             if done:
                 if i_episode % 10 == 0:
-                    print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(i_episode, reward, t+1, info))
+                    print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
+                        i_episode, reward, t+1, info))
                 penalties = 0
-                hist[i_episode] = {'reward': reward, 'steps': t+1, 'penalties': penalties}
+                hist[i_episode] = {'reward': reward,
+                                   'steps': t+1, 'penalties': penalties}
                 break
         if RENDER:
             print("############### End Episode", i_episode, "###############")
     print("\n############### End Training ###############\n")
     print("\n\n################## Report ##################\n")
     report = {"average_reward": utils.get_average_reward_last_n(hist, N_EPISODES),
-            "average_reward_last_10": utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)),
-            "average_steps": utils.get_average_steps_last_n(hist, N_EPISODES),
-            "average_steps_last_10": utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)),
-            "average_penalties": utils.get_average_penalties_last_n(hist, N_EPISODES),
-            "average_penalties_last_10": utils.get_average_penalties_last_n(hist, int(N_EPISODES*0.1))
-        }
+              "average_reward_last_10": utils.get_average_reward_last_n(hist, int(N_EPISODES*0.1)),
+              "average_steps": utils.get_average_steps_last_n(hist, N_EPISODES),
+              "average_steps_last_10": utils.get_average_steps_last_n(hist, int(N_EPISODES*0.1)),
+              "average_penalties": utils.get_average_penalties_last_n(hist, N_EPISODES),
+              "average_penalties_last_10": utils.get_average_penalties_last_n(hist, int(N_EPISODES*0.1))
+              }
     print("Average reward:", report["average_reward"])
-    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_reward_last_10"])
+    print("Average reward of last 10%("+str(int(N_EPISODES*0.1))+"):",
+          report["average_reward_last_10"])
     print("Average steps:", report["average_steps"])
-    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_steps_last_10"])
+    print("Average steps of last 10%("+str(int(N_EPISODES*0.1))+"):",
+          report["average_steps_last_10"])
     print("Average penalties:", report["average_penalties"])
-    print("Average penalties of last 10%("+str(int(N_EPISODES*0.1))+"):", report["average_penalties_last_10"])
+    print("Average penalties of last 10%("+str(int(N_EPISODES*0.1))+"):",
+          report["average_penalties_last_10"])
     print("\nQ-table:")
     print(agent.qtable)
     print("\n################ End Report ################")
     utils.generate_report_file(config, report, hist, agent.qtable)
     env.close()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test argparse')
-    parser.add_argument('-f', '--file', help='agent config file', required=True, type=str, dest='configfile')
+    parser.add_argument('-f', '--file', help='agent config file',
+                        required=True, type=str, dest='configfile')
     args = parser.parse_args()
     main(args)
-

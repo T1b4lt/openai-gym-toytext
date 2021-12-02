@@ -31,7 +31,8 @@ for i_episode in range(N_EPISODES):
         state = next_state
         if done:
             if i_episode % 10 == 0:
-                print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(i_episode, reward, t+1, info))
+                print('Episode: {} Reward: {} Steps Taken: {} Info: {}'.format(
+                    i_episode, reward, t+1, info))
             hist[i_episode] = {'reward': reward, 'steps': t+1}
             break
     if RENDER:

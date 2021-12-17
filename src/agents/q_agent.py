@@ -2,11 +2,13 @@ import numpy as np
 
 
 class QAgent:
-    def __init__(self, states, actions, qtable=None, exploration_ratio=0.1, learning_rate=0.2, discount_factor=0.9):
+    def __init__(self, states, actions, qtable=None, exploration_ratio=0.1, learning_rate=0.2, discount_factor=0.9, e_decay_limit=0.05, e_decay_rate=0.01):
         # Set parameters of the agent
         self.exploration_ratio = exploration_ratio
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
+        self.e_decay_limit = e_decay_limit
+        self.e_decay_rate = e_decay_rate
         self.actions = actions
 
         # Initialize Q-table
@@ -25,8 +27,8 @@ class QAgent:
                 low=0, high=1, size=(1, self.actions.n))/1000
             action = np.argmax(self.qtable[state]+random_values)
         # e-greedy decay
-        if self.exploration_ratio > 0.05:
-            self.exploration_ratio -= 0.01
+        if self.exploration_ratio > self.e_decay_limit:
+            self.exploration_ratio -= self.e_decay_rate
         return action
 
     def update_qtable(self, state, action, reward, next_state, done):

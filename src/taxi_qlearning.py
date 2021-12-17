@@ -16,6 +16,8 @@ def main(args):
     EXPLORATION_RATIO = config['exploration_ratio']
     LEARNING_RATE = config['learning_rate']
     DISCOUNT_FACTOR = config['discount_factor']
+    E_DECAY_LIMIT = config['e_decay_limit']
+    E_DECAY_RATE = config['e_decay_rate']
     RENDER = config['render']
     REPORT_FILE = config['report_file']
 
@@ -35,7 +37,7 @@ def main(args):
     hist = {}
 
     agent = QAgent(env.observation_space, env.action_space, exploration_ratio=EXPLORATION_RATIO,
-                   learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR)
+                   learning_rate=LEARNING_RATE, discount_factor=DISCOUNT_FACTOR, E_DECAY_LIMIT=E_DECAY_LIMIT, E_DECAY_RATE=E_DECAY_RATE)
 
     print("\n\n############### Ini Training ###############\n")
     for i_episode in range(N_EPISODES):
